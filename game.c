@@ -1,34 +1,17 @@
-/*******************************************************************************************
-*
-*   raylib - classic game: pang
-*
-*   Sample game developed by Ian Eito and Albert Martos and Ramon Santamaria
-*
-*   This game has been created using raylib v1.3 (www.raylib.com)
-*   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
-*
-*   Copyright (c) 2015 Ramon Santamaria (@raysan5)
-*
-********************************************************************************************/
-
-// cc demo.c `pkg-config --libs --cflags raylib` -o Demo
+// cc game.c `pkg-config --libs --cflags raylib` -o Game
 
 #include "raylib.h"
 
 #include <math.h>
 
-#if defined(PLATFORM_WEB)
-    #include <emscripten/emscripten.h>
-#endif
-
 //----------------------------------------------------------------------------------
 // Some Defines
 //----------------------------------------------------------------------------------
 #define PLAYER_BASE_SIZE    20.0f
-#define PLAYER_SPEED        5.0f
+#define PLAYER_SPEED        20.0f
 #define PLAYER_MAX_SHOOTS   1
 
-#define MAX_BIG_BALLS       2
+#define MAX_BIG_BALLS       4
 #define BALLS_SPEED         2.0f
 
 //----------------------------------------------------------------------------------
@@ -246,6 +229,7 @@ void UpdateGame(void)
             // Player logic
             if (IsKeyDown(KEY_LEFT))  player.position.x -= player.speed.x;
             if (IsKeyDown(KEY_RIGHT))  player.position.x += player.speed.x;
+            if (IsKeyDown(KEY_UP))  player.rotation += player.speed.x;
 
             // Player vs wall collision logic
             if (player.position.x + PLAYER_BASE_SIZE/2 > screenWidth) player.position.x = screenWidth - PLAYER_BASE_SIZE/2;
@@ -258,9 +242,10 @@ void UpdateGame(void)
                 {
                     if (!shoot[i].active)
                     {
-                        shoot[i].position = (Vector2){ player.position.x, player.position.y - shipHeight };
+                        shoot[i].position = (Vector2){ player.position.x, player.rotation };
                         shoot[i].speed.y = PLAYER_SPEED;
                         shoot[i].active = true;
+                        shoot[i].rotation = player.rotation;
 
                         linePosition = (Vector2){ player.position.x, player.position.y};
 
